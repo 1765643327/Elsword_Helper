@@ -11,7 +11,7 @@ from Settings.setting_interface import Setting_interface
 from Timer.timer_interface import TimerInterface
 from Equipment.equ_interface import Equipments_interface
 from Tools.Tools_interface import ToolsInterface
-
+from Scripts.Listener import Listener
 BASE_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
 
 
@@ -76,7 +76,9 @@ class Window(FluentWindow):
             print(f"图标文件不存在: {icon_path}")
         self.setWindowTitle("Elsword Helper")
 
-
+    def closeEvent(self, e):
+        Listener().mouse_listener.stop()
+        return super().closeEvent(e)
 if __name__ == "__main__":
     try:
         QApplication.setHighDpiScaleFactorRoundingPolicy(

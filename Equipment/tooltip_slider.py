@@ -21,7 +21,7 @@ class Tooltip_Slider(QWidget):
         # self.slider_button.setValidator(QDoubleValidator(self.slider_button))
         self.slider_button.setAlignment(Qt.AlignCenter)
         self.slider_button.setText(str(time_gap))
-        self.slider.setValue(time_gap * 100)
+        self.slider.setValue(int(time_gap * 100))
         self.slider_button.setMinimumWidth(80)
         self.slider_button.setFixedWidth(80)
         self.slider_label = BodyLabel("操作间隔")
@@ -57,7 +57,17 @@ class Tooltip_Slider(QWidget):
 
     def update_slider(self, parent):
         # self.switch.setChecked(False)
-        self.slider.setValue(float(self.slider_button.text()) * 100)
+        value = float(self.slider_button.text())
+        if float(self.slider_button.text()) < 0.01:
+            self.slider_button.setText("0.01")
+            value = 0.01
+            self.slider.setValue(int(value) * 100)
+        elif float(self.slider_button.text()) > 1.00:
+            self.slider_button.setText("1.00")
+            value = 1.00
+            self.slider.setValue(int(value) * 100)
+        else:
+            self.slider.setValue(int(value) * 100)
         self.setting_msg["time_gap"] = self.slider.value() * 0.01
         parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
         pass

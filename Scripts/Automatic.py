@@ -56,7 +56,6 @@ class AutoEquipment(QObject):
             print(
                 f"{self.time_stamp()}: 鼠标轨迹录制完毕,随时按下 {self.ACTIVE_SIGNAL_KEY.title()} 以启动换装"
             )
-            self.listener.mouse_listener.stop()
             self.SAVE_SIGNAL = False
             self.temp_list = self.record
             return
@@ -79,6 +78,7 @@ class AutoEquipment(QObject):
         if gw.getActiveWindowTitle() != self.game_window_title or self.terminate_flag:
             return
         print(f"{self.time_stamp()}: 执行换装")
+
         kb.press(self.EQU_KEY)
         time.sleep(0.03)
         kb.release(self.EQU_KEY)

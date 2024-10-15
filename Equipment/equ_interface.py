@@ -3,13 +3,13 @@ from PyQt5.QtWidgets import (
     QWidget,
     QStackedWidget,
     QVBoxLayout,
-    QLabel,
+
     QWidget,
-    QLabel,
+
 )
 from qfluentwidgets import (
     setTheme,
-    SegmentedWidget,
+
 )
 from .equipment import Equipments
 import os

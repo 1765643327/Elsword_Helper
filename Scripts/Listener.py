@@ -12,8 +12,8 @@ class Listener:
         return cls._instance
 
     def __init__(self,kb_Linsten_func=None, mouse_Linsten_func=None):
-        self.kb_Linsten_func = kb_Linsten_func
-        self.mouse_Linsten_func = mouse_Linsten_func
-        self.mouse_listener = mouse.Listener(on_click=self.mouse_Linsten_func)        
+        # self.kb_Linsten_func = kb_Linsten_func
         # self.kb_listener = kb.on_press(self.kb_Linsten_func)
-        self.mouse_listener.start()
+        self.mouse_Linsten_func = mouse_Linsten_func
+        self.mouse_listener = mouse.Listener(on_click=self.mouse_Linsten_func)
+        self.mouse_listener.start()        
