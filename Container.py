@@ -58,7 +58,7 @@ class CustomFrame(QFrame):
     def mouseMoveEvent(self, event):
         mouseX = event.x()
         mouseY = event.y()
-        print("mouseMoveEvent: ", mouseX, mouseY)
+        # print("mouseMoveEvent: ", mouseX, mouseY)
 
         # 设置光标样式
         if mouseX > self.width() - 10 and mouseY > self.height() - 10:
