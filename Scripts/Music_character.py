@@ -9,7 +9,7 @@ import sys
 from pyautogui import size
 
 BASE_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
-# BASE_DIR = 'E:\Vscode\WorkSpace\Auto_Music\Elsword_Helper'
+# BASE_DIR = 'E:\Vscode\WorkSpace\Elsword_Helper'
 
 
 class MusicService:
@@ -22,7 +22,7 @@ class MusicService:
     
     def __init__(self):
         self.letters = {
-            # "A": self.convert_img(os.path.join(BASE_DIR, "images\characters", "A.png")),
+            "A": self.convert_img(os.path.join(BASE_DIR, "images\characters", "A.png")),
             "B": self.convert_img(os.path.join(BASE_DIR, "images\characters", "B.png")),
             "C": self.convert_img(os.path.join(BASE_DIR, "images\characters", "C.png")),
             "D": self.convert_img(os.path.join(BASE_DIR, "images\characters", "D.png")),
@@ -31,19 +31,29 @@ class MusicService:
             "G": self.convert_img(os.path.join(BASE_DIR, "images\characters", "G.png")),
             "C!": self.convert_img(os.path.join(BASE_DIR, "images\characters", "C!.png")),
         }
-
+        cv2.imshow("A", self.letters["A"])
+        cv2.imshow("B", self.letters["B"])
+        cv2.imshow("C", self.letters["C"])
+        cv2.imshow("D", self.letters["D"])
+        cv2.imshow("E", self.letters["E"])
+        cv2.imshow("F", self.letters["F"])
+        cv2.imshow("G", self.letters["G"])
+        cv2.imshow("C!", self.letters["C!"])
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
         self.single = False
+        
 
     def find_string(self, img, letters):
         result = []
         for letter in letters:
             result.append(
-                (letter, cv2.matchTemplate(img, letters[letter], cv2.TM_CCOEFF_NORMED))
+                (letter, cv2.matchTemplate(img, letters[letter], cv2.TM_CCORR_NORMED))
             )
         result = [
             (letter, pt)
             for letter, value in result
-            for pt in zip(*np.where(value >= 0.9)[::-1])
+            for pt in zip(*np.where(value >= 0.95)[::-1])
         ]
         if result == []:
             return []
@@ -80,7 +90,7 @@ class MusicService:
                 result += string_list[i]
         return result
 
-    def convert_img(self, img_path,threshold=60):
+    def convert_img(self, img_path,threshold=65):
         img = cv2.imread(img_path, 0)
         _, binary_image = cv2.threshold(img, threshold, 255, cv2.THRESH_BINARY_INV)
         return binary_image
@@ -102,4 +112,7 @@ class MusicService:
 #     music_service.single = False
 
 
+
+# |AC!BG|CBGF|CC!AA|AFEE|GEBB
+# |FECC|FBFA|FGGE|CDAC!|C!ECC!
 

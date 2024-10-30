@@ -22,6 +22,7 @@ class EquSetting(SettingCardGroup):
             content="指按下和松开的间隔 | 单位毫秒",
         )
         self.frequency.slider.setValue(self.window().settings["frequency"])
+        self.modify_frequency()
         self.frequency.slider.valueChanged.connect(self.modify_frequency)
         self.titleLabel.hide()
         self.addSettingCard(self.frequency)
