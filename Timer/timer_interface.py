@@ -1,6 +1,7 @@
 # coding:utf-8
 from PyQt5.QtWidgets import QWidget, QStackedWidget, QVBoxLayout, QLabel
 from qfluentwidgets import SegmentedWidget
+from .buff_timer_interface import BuffTimerInterface
 
 
 class TimerInterface(QWidget):
@@ -12,7 +13,7 @@ class TimerInterface(QWidget):
             cls._instance = super(TimerInterface, cls).__new__(cls)
         return cls._instance
 
-    def __init__(self, paths, parent=None):
+    def __init__(self,parent,basedir,*args, **kwargs):
         super().__init__()
         self.setObjectName("timer_interface")
         # setTheme(Theme.DARK)
@@ -31,7 +32,7 @@ class TimerInterface(QWidget):
         self.vBoxLayout = QVBoxLayout(self)
 
         self.machineInterface = QLabel(self)
-        self.buffInterface = QLabel(self)
+        self.buffInterface = BuffTimerInterface(self,'bufftimerinterface',basedir)
 
         # 添加子界面
         self.addSubInterface(self.machineInterface, "machine", "副本机制")
@@ -43,15 +44,12 @@ class TimerInterface(QWidget):
 
         self.stackedWidget.setCurrentWidget(self.machineInterface)
         self.pivot.setCurrentItem(self.machineInterface.objectName())
-        self.pivot.currentItemChanged.connect(self.onCurrentItemChanged)
+        self.pivot.currentItemChanged.connect(
+            lambda k: self.stackedWidget.setCurrentWidget(self.findChild(QWidget, k))
+        )
 
     def addSubInterface(self, widget: QLabel, objectName, text):
         widget.setObjectName(objectName)
         self.stackedWidget.addWidget(widget)
         self.pivot.addItem(routeKey=objectName, text=text)
 
-    def onCurrentItemChanged(self, currentItem):
-        try:
-            self.stackedWidget.setCurrentWidget(self.findChild(QLabel, currentItem))
-        except Exception as e:
-            print(f"切换界面时发生错误: {e}")

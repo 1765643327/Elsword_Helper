@@ -9,7 +9,6 @@ import sys
 from pyautogui import size
 
 BASE_DIR = os.path.dirname(os.path.realpath(sys.argv[0]))
-# BASE_DIR = 'E:\Vscode\WorkSpace\Elsword_Helper'
 
 
 class MusicService:
@@ -31,16 +30,6 @@ class MusicService:
             "G": self.convert_img(os.path.join(BASE_DIR, "images\characters", "G.png")),
             "C!": self.convert_img(os.path.join(BASE_DIR, "images\characters", "C!.png")),
         }
-        cv2.imshow("A", self.letters["A"])
-        cv2.imshow("B", self.letters["B"])
-        cv2.imshow("C", self.letters["C"])
-        cv2.imshow("D", self.letters["D"])
-        cv2.imshow("E", self.letters["E"])
-        cv2.imshow("F", self.letters["F"])
-        cv2.imshow("G", self.letters["G"])
-        cv2.imshow("C!", self.letters["C!"])
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
         self.single = False
         
 

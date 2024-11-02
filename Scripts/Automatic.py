@@ -47,6 +47,8 @@ class AutoEquipment(QObject):
         pass
 
     def excute_save(self):
+        if gw.getActiveWindowTitle() != self.game_window_title:
+            return
         if self.FLAG != 0:
             print(f"{self.time_stamp()}: 录制鼠标轨迹中...")
             self.FLAG = self.FLAG - 1

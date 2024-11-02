@@ -6,9 +6,9 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QApplication, QFrame, QHBoxLayout
 from qfluentwidgets import NavigationItemPosition, FluentWindow, SubtitleLabel, setFont
 from qfluentwidgets import FluentIcon as FIF
+from Timer.timer_interface import TimerInterface
 from utils.files_processer import DataProcess
 from Settings.setting_interface import Setting_interface
-from Timer.timer_interface import TimerInterface
 from Equipment.equ_interface import Equipments_interface
 from Tools.Tools_interface import ToolsInterface
 from Scripts.Listener import Listener
@@ -42,7 +42,7 @@ class Window(FluentWindow):
         try:
             self.homeInterface = Widget("主页开发中", self)
             self.utilsInterface = ToolsInterface(self,BASE_DIR)
-            self.timerInterface = TimerInterface(None)
+            self.timerInterface = TimerInterface(self,BASE_DIR)
             self.equipmentInterface = Equipments_interface(BASE_DIR)
             self.settingInterface = Setting_interface(
                 self.settings,
@@ -87,6 +87,7 @@ if __name__ == "__main__":
         QApplication.setAttribute(Qt.AA_EnableHighDpiScaling) 
         QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
         app = QApplication(sys.argv)
+        app.setQuitOnLastWindowClosed(True)
         window = Window()
         window.show()
         app.exec()
