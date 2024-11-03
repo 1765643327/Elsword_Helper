@@ -7,11 +7,12 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from Scripts.Timer_keyboard import TimerManager
 
 class TimerWidget(QWidget):
-    icon_size = 56
+    icon_size = 64
     def __init__(self,parent,config):
         super().__init__()
         self.timer_card = parent
         self.timer_working = False
+        self.config = config
         # 设置初始时间
         if config['cooldown'] == '':
             self.initial_time = 0
@@ -40,8 +41,8 @@ class TimerWidget(QWidget):
             self.time_left -= 1
             self.update_image()
         else:
-            self.timer_working = False
             self.timer.stop()
+           
 
     def update_image(self):
         pixmap = self.original_pixmap.copy()
@@ -56,17 +57,29 @@ class TimerWidget(QWidget):
             painter.drawText(pixmap.rect(), Qt.AlignCenter,
                              str(self.time_left))
         painter.end()
+        if self.time_left == 0:
+            self.timer_working = False
         self.image_label.setPixmap(pixmap)
+        
 
     def start_timer(self):
         if self.timer_working == False:
             self.timer_working = True
             self.time_left = self.initial_time
             self.timer.start(1000)
+            self.update_image()
     
+    def stop_timer(self):
+        self.timer.stop()
+        self.timer_working = False
+
     def resetConfig(self,config):
-        self.initial_time = int(config['cooldown'])
+        if config['cooldown'] == '':
+            self.initial_time = 0
+        else:
+            self.initial_time = int(config['cooldown'])
         self.time_left = self.initial_time
         self.keyboard_listener.reset_input_sequence(config)
         self.original_pixmap = QPixmap(config['icon']).scaled(self.icon_size, self.icon_size, Qt.KeepAspectRatio)  # 替换为你的图像路径
         self.image_label.setPixmap(self.original_pixmap)
+        

@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFrame
 from PyQt5.QtGui import QPainter, QColor,QPen
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,QEvent
 from PyQt5.QtGui import QCursor
 from qfluentwidgets.components.layout import FlowLayout
 from .timericon import TimerWidget
@@ -104,3 +104,4 @@ class TimerMonitor(QFrame):
         widget.hide()
         self.mylayout.removeWidget(widget)
         self.update()
+

@@ -1,5 +1,5 @@
 # coding:utf-8
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt,QEvent
 from PyQt5.QtWidgets import QSizePolicy,QLabel
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QScrollArea
 from qfluentwidgets.components import CommandBar
