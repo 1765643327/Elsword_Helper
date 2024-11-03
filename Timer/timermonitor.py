@@ -105,3 +105,5 @@ class TimerMonitor(QFrame):
         self.mylayout.removeWidget(widget)
         self.update()
 
+    
+   

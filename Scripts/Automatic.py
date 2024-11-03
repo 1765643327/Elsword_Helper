@@ -47,6 +47,8 @@ class AutoEquipment(QObject):
         pass
 
     def excute_save(self):
+        if self.temp_parent.switch.isChecked() == False:
+            return
         if gw.getActiveWindowTitle() != self.game_window_title:
             return
         if self.FLAG != 0:
@@ -126,6 +128,8 @@ class AutoEquipment(QObject):
         self.save_signal = kb.add_hotkey(SAVE_SIGNAL_KEY,self.excute_save)
         self.activate_signal = kb.add_hotkey(ACTIVE_SIGNAL_KEY,self.excute_click)
         self.EQU_KEY = EQU_KEY
+        self.ACTIVE_SIGNAL_KEY = ACTIVE_SIGNAL_KEY
+        self.SAVE_SIGNAL_KEY = SAVE_SIGNAL_KEY
         pass
 
     def set_cor_list(self, cor_list):

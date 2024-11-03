@@ -7,7 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from Scripts.Timer_keyboard import TimerManager
 
 class TimerWidget(QWidget):
-    icon_size = 64
+    icon_size = 52
     def __init__(self,parent,config):
         super().__init__()
         self.timer_card = parent
@@ -72,6 +72,9 @@ class TimerWidget(QWidget):
     def stop_timer(self):
         self.timer.stop()
         self.timer_working = False
+        self.initial_time = int(self.config['cooldown'])
+        self.original_pixmap = QPixmap(self.config['icon']).scaled(self.icon_size, self.icon_size, Qt.KeepAspectRatio)  # 替换为你的图像路径
+        self.image_label.setPixmap(self.original_pixmap)
 
     def resetConfig(self,config):
         if config['cooldown'] == '':
@@ -80,6 +83,7 @@ class TimerWidget(QWidget):
             self.initial_time = int(config['cooldown'])
         self.time_left = self.initial_time
         self.keyboard_listener.reset_input_sequence(config)
-        self.original_pixmap = QPixmap(config['icon']).scaled(self.icon_size, self.icon_size, Qt.KeepAspectRatio)  # 替换为你的图像路径
-        self.image_label.setPixmap(self.original_pixmap)
         
+    def resetIcon(self,icon):
+        self.original_pixmap = QPixmap(icon).scaled(self.icon_size, self.icon_size, Qt.KeepAspectRatio)  # 替换为你的图像路径
+        self.image_label.setPixmap(self.original_pixmap)

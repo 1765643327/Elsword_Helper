@@ -126,7 +126,8 @@ class PowerSettingCard(ExpandGroupSettingCard):
 
     def setbutton(self, label, button):
         self.switch.setChecked(False)
-        key = keyboard.read_hotkey(suppress=False)
+        key = keyboard.read_hotkey()
+        print(key)
         if label.text() == "触发按键":
             self.setting_msg["active_key"] = key.replace(" ", "_")
             button.setText(key.title())

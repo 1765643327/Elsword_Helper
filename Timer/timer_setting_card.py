@@ -88,8 +88,8 @@ class TimerSettingCard(CardWidget):
         self.cooldownedit.editingFinished.connect(self.resetConfig)
         self.activateedit.editingFinished.connect(self.resetConfig)
         self.activeButton.checkedChanged.connect(self.add_or_delete_for_monitor)
-
-        self.timer_widget = TimerWidget(self,self.config)
+        self.timer_widget = None
+        
         
     def deleteButtonClicked(self):
         dp.delete_json_content(os.path.join(self.basedir,r'Userdata\\timersetting.json'),self.config['id'])
@@ -99,12 +99,15 @@ class TimerSettingCard(CardWidget):
         self.config['cooldown'] = str(self.cooldownedit.text())
         self.config['activate'] = str(self.activateedit.text())
         self.config['icon'] = self.iconWidget._icon
-        self.timer_widget.resetConfig(self.config)
         dp.set_json_content(os.path.join(self.basedir,r'Userdata\\timersetting.json'),self.config)
 
 
     def add_or_delete_for_monitor(self):
         if self.activeButton.isChecked():
-            self.interface.timer_monitor.addWidget(self.timer_widget)
+            timer_widget = TimerWidget(self, self.config)
+            self.timer_widget = timer_widget
+            self.interface.timer_monitor.addWidget(timer_widget)
+            self.timer_widget.resetConfig(self.config)
         else:
-            self.interface.timer_monitor.removeWidget(self.timer_widget)
+            if self.timer_widget!=None:
+                self.interface.timer_monitor.removeWidget(self.timer_widget)

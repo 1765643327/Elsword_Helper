@@ -2,6 +2,8 @@ from qfluentwidgets.components.widgets import IconWidget
 from PyQt5.QtWidgets import QFileDialog
 from PIL import Image
 import os
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import  Qt
 
 class MyIcon(IconWidget):
     def __init__(self, parent, icon_path, basedir):
@@ -54,6 +56,6 @@ class MyIcon(IconWidget):
             save_path = os.path.join(self.basedir, r"images\\bufficon\\"+filename)  # 保存路径
             self.resize_image_with_transparency(fileName, save_path)  # 调用自定义的图像处理函数
             self.setIcon(save_path)  # 设置新的图标
-            self.parent().resetConfig()
-
+            if self.parent().timer_widget!=None:
+                self.parent().timer_widget.resetIcon()  # 通知父类重置图标
     

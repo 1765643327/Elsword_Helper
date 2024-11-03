@@ -24,8 +24,10 @@ class TimerManager(QObject):
         else:
             self.key_sequence_list = config['activate'].split('+')
             self.activate_key_list= [self.key_sequence_list[-1]]
-        for key in self.activate_key_list:
-            keyboard.add_hotkey(f"alt+{key}",self.reset_timer)
+        if len(self.key_sequence_list)>1:
+            keyboard.add_hotkey(f'tab+{self.key_sequence_list[0]}+{self.key_sequence_list[1]}', self.reset_timer)
+        else:
+            keyboard.add_hotkey(f'tab+{self.key_sequence_list[0]}', self.reset_timer)
         self.input_sequence = self.key_sequence_list.copy()
         self.start_timer_signal.connect(self.tm_parent.start_timer)
         self.stop_timer_signal.connect(self.tm_parent.stop_timer)
@@ -39,17 +41,27 @@ class TimerManager(QObject):
         pass
 
     def press_key(self, key):
+        # print(f"{id(self)}==={key.name}==={self.input_sequence}")
         if gw.getActiveWindowTitle() != self.game_window_title or self.tm_parent.timer_working:
             return
-        # if gw.getActiveWindowTitle() != self.game_window_title:
-        #     return
-        # print(f"{id(self)}==={key.name}==={self.input_sequence}")
-        if key.name == self.input_sequence[0] or self.input_sequence == self.activate_key_list:
-            if self.input_sequence != self.activate_key_list:
+        if key.name == self.key_sequence_list[0]:
+            self.input_sequence.pop(0)
+        if key.name in self.activate_key_list and self.input_sequence == self.activate_key_list:
+            self.input_sequence = self.key_sequence_list.copy()
+            self.start_timer_signal.emit()
+        if key.name in ['left','right','up','down']:
+            if self.input_sequence == self.activate_key_list:
+                return
+            if key.name == self.input_sequence[0]:
                 self.input_sequence.pop(0)
-            if self.input_sequence == [] or key.name in self.activate_key_list:
-                self.start_timer_signal.emit()
-                self.input_sequence = self.key_sequence_list.copy()
+            else:
+                if self.input_sequence[0] != self.key_sequence_list[0]:
+                    self.input_sequence.insert(0,self.key_sequence_list[0])
+                else:
+                    return
+        if self.input_sequence == []:
+            self.input_sequence = self.key_sequence_list.copy()
+            self.start_timer_signal.emit()
         else:
             return
 
@@ -71,8 +83,9 @@ class TimerManager(QObject):
         listener_thread.start()
     
     def reset_timer(self):
-        self.tm_parent.resetConfig(self.config)
+        # print(f"{id(self)}-->{self.activate_key_list}-->reset_timer")
         self.stop_timer_signal.emit()
+       
 
     def listen_keyboard(self):
         # 使用 keyboard 库来监听键盘事件
@@ -86,6 +99,5 @@ class TimerManager(QObject):
             self.activate_key_list = [item.split('+')[-1] for item in self.input_operations_list]
         else:
             self.key_sequence_list = config['activate'].split('+')
+            self.activate_key_list= [self.key_sequence_list[-1]]
         self.input_sequence = self.key_sequence_list.copy()
-
-
