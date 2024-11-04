@@ -2,6 +2,7 @@
 from PyQt5.QtCore import Qt
 from qfluentwidgets import Slider, LineEdit, BodyLabel
 from PyQt5.QtWidgets import QWidget, QHBoxLayout
+from Scripts.Automatic import AutoEquipment
 
 # from PyQt5.QtGui import QDoubleValidator
 
@@ -12,6 +13,7 @@ class Tooltip_Slider(QWidget):
 
         self.slider = Slider(Qt.Horizontal)
         self.setting_msg = setting_msg
+        self.tool_parent = parent
 
         self.slider.setValue(1)  # 默认值
         self.slider.setMinimum(1)  # 最小值
@@ -41,21 +43,21 @@ class Tooltip_Slider(QWidget):
         self.layout1.addStretch(1)
         self.layout1.addWidget(self.slider_button)
 
-        self.slider.valueChanged.connect(lambda: self.update_button_text(parent))
-        self.slider_button.editingFinished.connect(lambda: self.update_slider(parent))
-        self.slider_button.returnPressed.connect(lambda: self.update_slider(parent))
-
-        parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
+        self.slider.valueChanged.connect(lambda: self.update_button_text())
+        self.slider_button.editingFinished.connect(lambda: self.update_slider())
+        self.slider_button.returnPressed.connect(lambda: self.update_slider())
         pass
 
-    def update_button_text(self, parent):
+    def update_button_text(self):
         # self.switch.setChecked(False)
         # print(self.slider.value, type(self.slider.value))
         self.slider_button.setText("{:.2f}".format((self.slider.value() * 0.01)))
         self.setting_msg["time_gap"] = self.slider.value() * 0.01
-        parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
+        if isinstance(self.tool_parent.auto_equ,AutoEquipment):
+            self.tool_parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
+        
 
-    def update_slider(self, parent):
+    def update_slider(self):
         # self.switch.setChecked(False)
         value = float(self.slider_button.text())
         if float(self.slider_button.text()) < 0.01:
@@ -69,5 +71,6 @@ class Tooltip_Slider(QWidget):
         else:
             self.slider.setValue(int(value) * 100)
         self.setting_msg["time_gap"] = self.slider.value() * 0.01
-        parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
+        if isinstance(self.tool_parent.auto_equ,AutoEquipment):
+            self.tool_parent.auto_equ._set_time_gap(self.setting_msg["time_gap"])
         pass

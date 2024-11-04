@@ -12,6 +12,7 @@ from qfluentwidgets import (
     SegmentedWidget,
 )
 from .equ_settting import EquSetting
+from .timer_setting import TimerSetting
 
 
 class Setting_interface(QWidget):
@@ -42,7 +43,7 @@ class Setting_interface(QWidget):
         self.stackedWidget = QStackedWidget(self)
         self.vBoxLayout = QVBoxLayout(self)
 
-        self.characterInterface = QLabel(self)
+        self.characterInterface = TimerSetting(self, path=kwargs["path"])
         self.equipmentInterface = EquSetting(self, path=kwargs["path"])
 
         # add items to pivot

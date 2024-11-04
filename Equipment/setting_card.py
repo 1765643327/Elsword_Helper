@@ -39,13 +39,9 @@ class PowerSettingCard(ExpandGroupSettingCard):
         self.setObjectName(_id)
         self.temp_parent = parent
         self.setting_msg = json_data.copy()
-        self.auto_equ = AutoEquipment(
-            self, SAVE_SIGNAL_KEY=self.setting_msg["save_cor_key"], ACTIVE_SIGNAL_KEY=self.setting_msg["active_key"], EQU_KEY=self.setting_msg["item_key"])
 
-        self.task = threading.Thread(
-            target=self.auto_equ.run_script,
-            daemon=True,
-        )
+        self.auto_equ = None
+        self.task = None
 
         self.lable_list = []
         self.button_list = []
@@ -56,6 +52,7 @@ class PowerSettingCard(ExpandGroupSettingCard):
             self.setting_msg["active_key"].title())
         self.modeButton1.setObjectName(f"{self.objectName}_触发按键")
         self.modeLabel1 = BodyLabel("触发按键")
+        self.modeButton1.keyPressEvent = lambda event: event.ignore()
         self.lable_list.append(self.modeLabel1)
         self.button_list.append(self.modeButton1)
 
@@ -63,6 +60,8 @@ class PowerSettingCard(ExpandGroupSettingCard):
         self.modeButton2 = TogglePushButton(
             self.setting_msg["save_cor_key"].title())
         self.modeButton2.setObjectName(f"{self.objectName}_保存坐标序列按键")
+        self.modeButton2.keyPressEvent = lambda event: event.ignore()
+        
         self.modeLabel2 = BodyLabel("保存坐标序列按键")
         self.lable_list.append(self.modeLabel2)
         self.button_list.append(self.modeButton2)
@@ -71,6 +70,8 @@ class PowerSettingCard(ExpandGroupSettingCard):
         self.modeButton3 = TogglePushButton(
             self.setting_msg["item_key"].title())
         self.modeButton3.setObjectName(f"{self.objectName}_物品栏按键")
+        self.modeButton3.keyPressEvent = lambda event: event.ignore()
+        
         self.modeLabel3 = BodyLabel("物品栏按键")
         self.lable_list.append(self.modeLabel3)
         self.button_list.append(self.modeButton3)
@@ -94,7 +95,7 @@ class PowerSettingCard(ExpandGroupSettingCard):
                     self.button_list[i],
                 )
             )
-
+        
         # 挑战操作间隔按钮
         self.tootip_slider = Tooltip_Slider(
             self, self.setting_msg["time_gap"], self.setting_msg
@@ -125,42 +126,42 @@ class PowerSettingCard(ExpandGroupSettingCard):
         self.addGroupWidget(w)
 
     def setbutton(self, label, button):
-        self.switch.setChecked(False)
-        key = keyboard.read_hotkey()
-        print(key)
+        
+        key = keyboard.read_hotkey(suppress=False)
         if label.text() == "触发按键":
             self.setting_msg["active_key"] = key.replace(" ", "_")
             button.setText(key.title())
             button.setChecked(False)
-            self.auto_equ._set_key(
-                self.setting_msg["save_cor_key"],
-                self.setting_msg["active_key"],
-                self.setting_msg["item_key"],
-            )
-            return
+            if self.auto_equ is not None:
+                self.auto_equ._set_active_key(key)
+
         if label.text() == "保存坐标序列按键":
             self.setting_msg["save_cor_key"] = key.replace(" ", "_")
             button.setText(key.title())
             button.setChecked(False)
-            self.auto_equ._set_key(
-                self.setting_msg["save_cor_key"],
-                self.setting_msg["active_key"],
-                self.setting_msg["item_key"],
-            )
-            return
+            if self.auto_equ is not None:
+                self.auto_equ._set_save_key(key)
+
         if label.text() == "物品栏按键":
             self.setting_msg["item_key"] = key.replace(" ", "_")
             button.setText(key.title())
             button.setChecked(False)
-            self.auto_equ._set_key(
-                self.setting_msg["save_cor_key"],
-                self.setting_msg["active_key"],
-                self.setting_msg["item_key"],
-            )
-            return
+            if self.auto_equ is not None:
+                self.auto_equ._set_equ_key(key)
+
 
     def start_service(self):
-
+        if isinstance(self.auto_equ, AutoEquipment)==False:
+            self.auto_equ = AutoEquipment(
+                self, SAVE_SIGNAL_KEY=self.setting_msg["save_cor_key"], ACTIVE_SIGNAL_KEY=self.setting_msg["active_key"], EQU_KEY=self.setting_msg["item_key"])
+            self.auto_equ._set_time_gap(self.tootip_slider.setting_msg["time_gap"])
+        
+        self.auto_equ.set_cor_list(self.setting_msg["cor_list"])
+       
+        self.task = threading.Thread(
+            target=self.auto_equ.run_script,
+            daemon=True,
+        )
         if self.switch.checked:
             self.auto_equ.terminate_flag = False
             self.star_thread()
@@ -178,18 +179,17 @@ class PowerSettingCard(ExpandGroupSettingCard):
         DP.delete_json_content(self.temp_parent.config_path, self.objectName())
 
     def terminate_thread(self):
-
-        self.setting_msg["cor_list"] = self.auto_equ.get_cor_list()
-        self.switch.setEnabled(False)
-        self.auto_equ._set_terminate()
-
-        while self.task.is_alive():
-            continue
-        self.task = threading.Thread(
-            target=self.auto_equ.run_script,
-            daemon=True,
-        )
-        self.auto_equ.stopevent = threading.Event()
+        if self.auto_equ is not None:
+            self.setting_msg["cor_list"] = self.auto_equ.get_cor_list()
+            self.switch.setEnabled(False)
+            self.auto_equ._set_terminate()
+            while self.task.is_alive():
+                continue
+            self.task = threading.Thread(
+                target=self.auto_equ.run_script,
+                daemon=True,
+            )
+            self.auto_equ.stopevent = threading.Event()
         DP.set_json_content(self.temp_parent.config_path, self.setting_msg)
         self.switch.setEnabled(True)
 

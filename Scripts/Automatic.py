@@ -67,6 +67,8 @@ class AutoEquipment(QObject):
             return
 
     def on_click(self, x, y, button, pressed):
+        if self.temp_parent.switch.isChecked() == False:
+            return
         if gw.getActiveWindowTitle() != self.game_window_title:
             return
         if len(self.temp_list) != 0:
@@ -78,7 +80,8 @@ class AutoEquipment(QObject):
                 self.record.append((button.name, (x, y)))
 
     def excute_click(self):
-
+        if self.temp_parent.switch.isChecked() == False:
+            return
         if gw.getActiveWindowTitle() != self.game_window_title or self.terminate_flag:
             return
         print(f"{self.time_stamp()}: 执行换装")
@@ -97,6 +100,8 @@ class AutoEquipment(QObject):
                 pyautogui.rightClick(position)
 
     def run_script(self):
+        if self.temp_parent.switch.isChecked() == False:
+            return
         if len(self.temp_list) != 0:
             self.terminate_flag = False
             self.SAVE_SIGNAL = False
@@ -115,22 +120,24 @@ class AutoEquipment(QObject):
         self.stopevent.wait()  # 等待事件发生
         self.terminate_flag = True
         
-
     def _set_time_gap(self, time):
         self.time_gap = time
 
     def _set_terminate(self):
         self.stopevent.set()
 
-    def _set_key(self, SAVE_SIGNAL_KEY, ACTIVE_SIGNAL_KEY, EQU_KEY):
-        kb.remove_hotkey(self.save_signal)
-        kb.remove_hotkey(self.activate_signal)
+    def _set_save_key(self, SAVE_SIGNAL_KEY):
+        kb.remove_hotkey(self.SAVE_SIGNAL_KEY)
         self.save_signal = kb.add_hotkey(SAVE_SIGNAL_KEY,self.excute_save)
-        self.activate_signal = kb.add_hotkey(ACTIVE_SIGNAL_KEY,self.excute_click)
-        self.EQU_KEY = EQU_KEY
-        self.ACTIVE_SIGNAL_KEY = ACTIVE_SIGNAL_KEY
         self.SAVE_SIGNAL_KEY = SAVE_SIGNAL_KEY
-        pass
+    
+    def _set_active_key(self, ACTIVE_SIGNAL_KEY):
+        kb.remove_hotkey(self.ACTIVE_SIGNAL_KEY)
+        self.activate_signal = kb.add_hotkey(ACTIVE_SIGNAL_KEY,self.excute_click)
+        self.ACTIVE_SIGNAL_KEY = ACTIVE_SIGNAL_KEY
+
+    def _set_equ_key(self, EQU_KEY):
+        self.EQU_KEY = EQU_KEY
 
     def set_cor_list(self, cor_list):
         self.temp_list = cor_list
