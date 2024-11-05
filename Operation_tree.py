@@ -2,12 +2,14 @@ import keyboard
 from collections import deque
 from graphviz import Digraph
 
+
 class TreeNode:
     def __init__(self, value):
         self.value = value
         self.children = {}
         self.parent = None
         self.is_end_of_sequence = False
+
 
 class MultiTree:
     def __init__(self):
@@ -23,8 +25,6 @@ class MultiTree:
             current = current.children[key]
         current.is_end_of_sequence = True
 
-
-    
     def visualize_tree(self, node=None, graph=None):
         """ 可视化树结构 """
         if graph is None:
@@ -41,6 +41,7 @@ class MultiTree:
 
         return graph
 
+
 # 创建多叉树并添加操作序列
 tree = MultiTree()
 tree.add_sequence("ctrl+up+4")
@@ -56,6 +57,8 @@ input_queue = deque()
 current_node = tree.root  # 从根节点开始
 
 # # 按键回调函数
+
+
 def on_key_event(event):
     global input_queue
     global current_node
@@ -73,13 +76,13 @@ def on_key_event(event):
     else:
         if current_node.value == 'root':  # 如果当前节点是根节点
             return
-        if current_node.parent.value in ['root',None]:  # 如果当前节点不是根节点
+        if current_node.parent.value in ['root', None]:  # 如果当前节点不是根节点
             return
         if current_node.parent.value == event.name:  # 如果当前输入是父节点的按键
-                current_node = current_node.parent  # 回退到父节点
-                input_queue.pop()  # 弹出最后一个按键
-                print(f"当前输入序列:{input_queue}")
-                return 
+            current_node = current_node.parent  # 回退到父节点
+            input_queue.pop()  # 弹出最后一个按键
+            print(f"当前输入序列:{input_queue}")
+            return
         if event.name in current_node.parent.children:  # 如果当前输入是父节点的子节点的按键
             return
 
@@ -87,6 +90,6 @@ def on_key_event(event):
 # 注册热键监听
 keyboard.on_press(on_key_event)
 
-#4. 维持程序4运行，直到用户手动停止
+# 4. 维持程序4运行，直到用户手动停止
 print("按 'esc' 键退4出程序...")
 keyboard.wait('esc')
