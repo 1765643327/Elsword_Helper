@@ -45,6 +45,8 @@ class MultiTree:
 tree = MultiTree()
 tree.add_sequence("ctrl+up+4")
 tree.add_sequence("ctrl+down+v")
+tree.add_sequence("ctrl+down+g")
+tree.add_sequence("f")
 # 可视化树的结构
 dot_graph = tree.visualize_tree()
 dot_graph.render('multi_tree', format='png', cleanup=True)  # 生成图片并保存
@@ -68,19 +70,23 @@ def on_key_event(event):
             current_node = tree.root  # 回到根节点
         else:
             return
-    else: 
+    else:
+        if current_node.value == 'root':  # 如果当前节点是根节点
+            return
         if current_node.parent.value in ['root',None]:  # 如果当前节点不是根节点
             return
-        else:
-            current_node = current_node.parent  # 回退到父节点
-            input_queue.pop()  # 弹出最后一个按键
-            print(f"当前输入序列:{input_queue}")
-
+        if current_node.parent.value == event.name:  # 如果当前输入是父节点的按键
+                current_node = current_node.parent  # 回退到父节点
+                input_queue.pop()  # 弹出最后一个按键
+                print(f"当前输入序列:{input_queue}")
+                return 
+        if event.name in current_node.parent.children:  # 如果当前输入是父节点的子节点的按键
+            return
 
 
 # 注册热键监听
 keyboard.on_press(on_key_event)
 
 #4. 维持程序4运行，直到用户手动停止
-print("按 'esc' 键退出程序...")
+print("按 'esc' 键退4出程序...")
 keyboard.wait('esc')
