@@ -1,0 +1,10 @@
+{
+    "equ_settins": {
+        "mouse_move_time": 100,
+        "time": 20
+    },
+    "QFluentWidgets": {
+        "ThemeColor": "#ff009faa",
+        "ThemeMode": "Light"
+    }
+}
