@@ -6,16 +6,16 @@ class MyConfig(QConfig):
     """ 
     Config of application 
     """
-    equ_settins1 = ConfigItem(
+    mouse_move_time = ConfigItem(
         group="equ_settins",
-        name='mouse_move_time',
-        default=0,
+        name="mouse_move_time",
+        default=50,
         validator=None
     )
-    equ_settins2 = ConfigItem(
+    icon_size = ConfigItem(
         group="equ_settins",
-        name='time',
-        default=10,
+        name="icon_size",
+        default=56,
         validator=None
     )
 
