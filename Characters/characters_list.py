@@ -12,7 +12,7 @@ from qfluentwidgets.common import Action, FluentIcon
 
 class CharactersList(ListWidget):
     character_dict = {
-        "CET": "/home/zk/Vscode_WorkSpace/Elsword_Helper/Icon_-_Knight_Emperor.png"
+        "CET": "E:\Vscode\WorkSpace\Elsword_Helper_PS6\Elsword_Helper\Icon_-_Knight_Emperor.png"
     }
 
     def __init__(self, parent=None):

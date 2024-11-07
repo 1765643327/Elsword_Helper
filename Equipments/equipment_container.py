@@ -30,6 +30,7 @@ class EquipmentContainer(QWidget):
 
         self.mylayout = QVBoxLayout(self)
         self.mylayout.addWidget(self.scroller)
+        self.container.setContentsMargins(0, 0, 15, 0)
         self.setLayout(self.mylayout)
 
     def add_item(self, item, name):
