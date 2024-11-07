@@ -21,7 +21,6 @@ class Widget(QFrame):
         setFont(self.label, 24)
         self.label.setAlignment(Qt.AlignCenter)
         self.hBoxLayout.addWidget(self.label, 1, Qt.AlignCenter)
-
         # 必须给子界面设置全局唯一的对象名
         self.setObjectName(text.replace(" ", "-"))
 

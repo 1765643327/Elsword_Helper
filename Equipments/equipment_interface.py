@@ -1,13 +1,12 @@
-from PySide6.QtWidgets import (
-    QWidget,
-    QHBoxLayout,
-    QVBoxLayout,
-    QListWidgetItem,
-)
+from PySide6.QtWidgets import QWidget, QHBoxLayout, QVBoxLayout
 from PySide6.QtGui import QIcon
 from PySide6.QtCore import Qt, QSize
-from qfluentwidgets.components import ListWidget, CommandBar
+from qfluentwidgets.components import ListWidget, CommandBar, ComboBox
 from qfluentwidgets.common import Action, FluentIcon
+import sys, os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from Characters.characters_list import CharactersList
 
 
 class EquipmentInterface(QWidget):
@@ -17,59 +16,55 @@ class EquipmentInterface(QWidget):
         super().__init__(parent)
         self.setObjectName("EquipmentInterface")
         # 创建界面不同部分的布局
+        self.characters = CharactersList(self)
         self.container_layout = QHBoxLayout()
+        self.container_layout.setContentsMargins(0, 2, 2, 2)
+        self.selcet_container = QHBoxLayout()
+        # 创建命令栏
         self.commands = CommandBar()
         self.commands.setToolButtonStyle(Qt.ToolButtonTextBesideIcon)
-        self.commands.addActions(
-            [
-                Action(
-                    FluentIcon.EDIT,
-                    "编辑",
-                    checkable=True,
-                    triggered=lambda: print("编辑"),
-                ),
-                Action(FluentIcon.COPY, "复制"),
-                Action(FluentIcon.SHARE, "分享"),
-            ]
+        self.commands.addActions([Action(FluentIcon.ADD, "新建设置")])
+
+        # 创建配置选择框
+        self.comboxBox = ComboBox()
+        self.comboxBox.setStyleSheet(
+            """
+            QPushButton {
+                background-color: rgba(255, 255, 255, 100); /* 半透明白色背景 */
+                color: rgba(0, 0, 0, 255); /* 文字颜色 */
+                padding-right: 30px; /* 内边距 */
+                border: none; /* 无边框 */
+                border-radius: 10px; /* 圆角 */
+                font-size: 13px; /* 字体大小 */
+            }
+            # QPushButton:hover {
+            #     background-color: rgba(255, 255, 255, 200); /* 鼠标悬停时更亮 */
+            #     color:  rgba(0, 0, 0, 255); /* 按下时更暗 */
+            # }
+            """
         )
-        self.commands.setEnabled(False)
+        # self.comboxBox.setPlaceholderText("选择配置")
+        # self.comboxBox.addItems(["设置1", "设置2", "设置3"])
+        self.comboxBox.currentIndexChanged.connect(
+            lambda index: print(self.comboxBox.currentText())
+        )
+        self.selcet_container.addWidget(self.commands, 0, Qt.AlignLeft)
+        self.selcet_container.addWidget(self.comboxBox, 0, Qt.AlignRight)
+        # self.commands.setEnabled(False)
+        # self.comboxBox.setEnabled(False)
+        # 创建换装配置
         self.equipments = QWidget(self)
-        self.character_select_layout = QVBoxLayout()
+        self.equipments.setStyleSheet("QWidget{background-color: #F0F0F0;}")
+
         self.equipment_layout = QVBoxLayout()
-        self.container_layout.addLayout(self.character_select_layout, Qt.AlignLeft)
+        self.container_layout.addWidget(self.characters, Qt.AlignLeft)
         self.container_layout.addLayout(self.equipment_layout, Qt.AlignRight)
-        self.equipment_layout.addWidget(self.commands, Qt.AlignTop)
+        self.equipment_layout.addLayout(self.selcet_container, Qt.AlignTop)
         self.equipment_layout.addWidget(self.equipments, Qt.AlignBottom)
 
         self.setLayout(self.container_layout)
-        # 创建角色列表
-        self.list_commands = CommandBar()
-        self.list_commands.addActions(
-            [
-                Action(FluentIcon.EDIT, "选择角色"),
-                Action(FluentIcon.COPY, "删除角色"),
-            ]
-        )
-
-        self.character_list = ListWidget()
-        self.list_commands.setFixedWidth(100)
-        self.character_list.setFixedWidth(100)
-        self.character_list.setIconSize(QSize(24, 24))
-
-        self.character_select_layout.addWidget(self.list_commands)
-        self.character_select_layout.addWidget(self.character_list)
-        for character in self.character_msg:
-            item = QListWidgetItem(character)
-            item.setIcon(
-                QIcon(
-                    "/home/zk/Vscode_WorkSpace/Elsword_Helper/Icon_-_Knight_Emperor.png"
-                )
-            )
-            item.setTextAlignment(Qt.AlignCenter)
-            self.character_list.addItem(item)
-        self.hide_equipments(True)
+        # self.hide_equipments(True)
         # 创建装备列表
-
         pass
 
     def hide_equipments(self, flag):
